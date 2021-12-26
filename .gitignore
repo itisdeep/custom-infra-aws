@@ -1,8 +1,0 @@
-dev/*.tfvars
-*.tfstate
-dev/*.tfstate
-.terraform*
-dev/.terraform*
-.terraform/
-dev/.terraform/
-.gitignore
