@@ -1,5 +1,8 @@
-*.tfvars
+dev/*.tfvars
 *.tfstate
-*terraform*
+dev/*.tfstate
+.terraform*
+dev/.terraform*
 .terraform/
+dev/.terraform/
 .gitignore
