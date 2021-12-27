@@ -1,3 +1,5 @@
+agent {'windows-local'}
+
 pipeline {
     stages {
         stage ('check'){
