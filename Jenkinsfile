@@ -4,7 +4,7 @@ pipeline {
         stage ('check'){
             steps {
                 script {
-                    withCredentials ([usernamePassword(credentialId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
                         println tfuser
                         println tfpass
                     }
