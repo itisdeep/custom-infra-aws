@@ -18,16 +18,17 @@ case "$isinit" in
         echo "Invalid input"
 esac
 
-echo "Do you want to run terraform plan? yes/no"
-read isplan
+# echo "Do you want to run terraform plan for backend infra? yes/no"
+# read isbackendplan
 
-case "$isplan" in
+isbackendplan="yes"
+
+case "$isbackendplan" in
     "yes")
-        terraform plan --var-file="$env/$env.tfvars"
-        if [[ $? == 0 ]]; then
-            export PLAN="SUCCESS"
-        else echo "plan failed, please review the code..."
-        exit 200
+        cd $env; terraform plan --var-file="$env.tfvars" && PLANINFRA="SUCCESS"; cd ..
+        if [[ $PLANINFRA != "SUCCESS" ]]; then
+            echo "Backend plan failed, please review the code..."
+            exit 200
         fi
         ;;
     "no")
@@ -36,7 +37,33 @@ case "$isplan" in
         echo "Invalid input"
 esac
 
-echo "continue to apply? (yes/no)"
+echo "continue to apply backend infra? (yes/no)"
+read isbackendapply
+if [[ $isbackendapply == "yes" ]]; then
+    cd $env; terraform apply --var-file="$env.tfvars" -auto-approve; cd ..
+else echo "Skipping apply ..."
+fi
+
+# echo "Do you want to run terraform plan for main infra? yes/no"
+# read isplan
+
+isplan="yes"
+
+case "$isplan" in
+    "yes")
+        terraform plan --var-file="$env/$env.tfvars" && PLANMAIN="SUCCESS"; cd ..
+        if [[ $PLANMAIN != "SUCCESS" ]]; then
+            echo "Plan failed, please review the code..."
+            exit 201
+        fi
+        ;;
+    "no")
+        ;;
+    *)
+        echo "Invalid input"
+esac
+
+echo "continue to apply main infra? (yes/no)"
 read isapply
 if [[ $isapply == "yes" ]]; then
     terraform apply --var-file="$env/$env.tfvars" -auto-approve
