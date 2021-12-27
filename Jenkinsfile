@@ -1,6 +1,6 @@
 pipeline {
     stages {
-        stage {
+        stage ('check'){
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
