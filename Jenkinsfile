@@ -50,9 +50,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        // bat "echo. >>  ${params.environment}\\${params.environment}.tfvars"
-                        // bat "echo access_key=\"${tfuser}\" >> ${params.environment}\\${params.environment}.tfvars"
-                        // bat "echo secret_key=\"${tfpass}\" >> ${params.environment}\\${params.environment}.tfvars"
+                        bat "$Env:TF_VAR_access_key = \"${tfuser}\"; $Env:TF_VAR_secret_key = \"${tfpass}\""
                         dir (params.environment) {
                             bat "terraform plan --var-file=${params.environment}.tfvars"
                             bat "terraform apply --var-file=${params.environment}.tfvars -auto-approve"
@@ -67,6 +65,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "$Env:TF_VAR_access_key = \"${tfuser}\"; $Env:TF_VAR_secret_key = \"${tfpass}\""
                         bat "terraform plan --var-file=${params.environment}\\${params.environment}.tfvars"
                         bat "terraform apply --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
                     }
