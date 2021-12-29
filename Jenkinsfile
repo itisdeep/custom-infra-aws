@@ -49,6 +49,7 @@ pipeline {
         }
 
         stage ('Apply') {
+            when { expression {runDestroy == false}}
             steps {
                 script {
                     dir (params.environment) {
