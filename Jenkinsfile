@@ -61,7 +61,11 @@ pipeline {
         }
 
         stage ('Plan and apply main infra') {
-            when { expression {params.runDestroy == false}}
+            when { allOf {
+                expression {params.runDestroy == false}
+                expression {params.destroy_backend == false}
+                }
+            }
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {

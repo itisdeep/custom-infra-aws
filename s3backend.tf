@@ -1,8 +1,13 @@
 terraform {
-  backend "s3" {
-    bucket         = "s3-backend-myapp-dev"
+  backend "s3" {}
+}
+
+data "terraform_remote_state" "dev-state" {
+  backend = "s3"
+  config {
+    bucket         = "s3-backend-${var.app_name}-${var.env}"
     key            = "terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dev-terraform_state"
+    region         = "${var.region}"
+    dynamodb_table = "${var.env}-terraform_state"
   }
 }
