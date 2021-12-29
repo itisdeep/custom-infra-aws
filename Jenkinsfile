@@ -76,7 +76,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat "terraform destroy --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
+                        bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
                         dir (params.environment) {
                             bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
                         }
