@@ -42,7 +42,7 @@ pipeline {
         }
 
         stage ('Plan and Apply') {
-            when { expression {runDestroy == false}}
+            when { expression {params.runDestroy == false}}
             steps {
                 script {
                     dir (params.environment) {
