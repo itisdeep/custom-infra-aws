@@ -50,7 +50,8 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat '$Env:TF_VAR_access_key = \"${tfuser}\"; \$Env:TF_VAR_secret_key = \"${tfpass}\"'
+                        bat "setx TF_VAR_access_key \"${tfuser}\""
+                        bat "setx TF_VAR_secret_key \"${tfpass}\""
                         dir (params.environment) {
                             bat "terraform plan --var-file=${params.environment}.tfvars"
                             bat "terraform apply --var-file=${params.environment}.tfvars -auto-approve"
@@ -65,7 +66,8 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat '$Env:TF_VAR_access_key = \"${tfuser}\"; \$Env:TF_VAR_secret_key = \"${tfpass}\"'
+                        bat "setx TF_VAR_access_key \"${tfuser}\""
+                        bat "setx TF_VAR_secret_key \"${tfpass}\""
                         bat "terraform plan --var-file=${params.environment}\\${params.environment}.tfvars"
                         bat "terraform apply --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
                     }
@@ -78,7 +80,8 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat '$Env:TF_VAR_access_key = \"${tfuser}\"; \$Env:TF_VAR_secret_key = \"${tfpass}\"'
+                        bat "setx TF_VAR_access_key \"${tfuser}\""
+                        bat "setx TF_VAR_secret_key \"${tfpass}\""
                         dir (params.environment) {
                             bat "terraform destroy --var-file=${params.environment}.tfvars -auto-approve"
                         }
