@@ -26,22 +26,6 @@ pipeline {
             }
         }
 
-        stage ('Init main'){
-            when { 
-                allOf {
-                    expression {params.initMain == true}
-                    expression {params.runDestroy == false}
-                }
-            }
-            steps {
-                script {
-                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
-                    }
-                }
-            }
-        }
-
         stage ('Plan and Apply backend') {
             when { allOf { 
                 expression {params.runDestroy == false}
@@ -54,6 +38,22 @@ pipeline {
                             bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars"
                             bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
                         }
+                    }
+                }
+            }
+        }
+
+        stage ('Init main'){
+            when { 
+                allOf {
+                    expression {params.initMain == true}
+                    expression {params.runDestroy == false}
+                }
+            }
+            steps {
+                script {
+                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
                     }
                 }
             }
