@@ -1,6 +1,3 @@
-def isBackendPlan
-def isMainPlan
-
 pipeline {
     agent {label 'windows-local'}
 
@@ -23,14 +20,12 @@ pipeline {
                 script {
                     dir (params.environment) {
                         bat 'terraform init'
-                        bat "terraform plan --var-file=${params.environment}.tfvars"
-                        isBackendPlan = 'SUCCESS'
                     }
                 }
             }
         }
 
-        stage ('Init main and plan'){
+        stage ('Init main'){
             when { 
                 allOf {
                     expression {params.initMain == true}
@@ -41,25 +36,21 @@ pipeline {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
                         bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
-                        bat "terraform plan --var-file=${params.environment}\\${params.environment}.tfvars"
-                        isMainPlan = 'SUCCESS'
                     }
                 }
             }
         }
 
-        stage ('Apply') {
+        stage ('Plan and Apply') {
             when { expression {runDestroy == false}}
             steps {
                 script {
                     dir (params.environment) {
-                        if (isMainPlan == 'SUCCESS') {
-                            bat "terraform apply --var-file=${params.environment}.tfvars -auto-approve"
-                        }
+                        bat "terraform plan --var-file=${params.environment}.tfvars"
+                        bat "terraform apply --var-file=${params.environment}.tfvars -auto-approve"
                     }
-                    if (isBackendPlan == 'SUCCESS') {
-                        bat "terraform apply --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
-                    }
+                    bat "terraform plan --var-file=${params.environment}\\${params.environment}.tfvars"
+                    bat "terraform apply --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
                 }
             }
         }
