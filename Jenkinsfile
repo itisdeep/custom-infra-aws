@@ -45,6 +45,8 @@ pipeline {
             when { expression {params.runDestroy == false}}
             steps {
                 script {
+                    bat "echo access_key=\"${tfuser}\" >> ${params.environment}\\${params.environment}.tfvars"
+                    bat "echo secret_key=\"${tfpass}\" >> ${params.environment}\\${params.environment}.tfvars"
                     dir (params.environment) {
                         bat "terraform plan --var-file=${params.environment}.tfvars"
                         bat "terraform apply --var-file=${params.environment}.tfvars -auto-approve"
