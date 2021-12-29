@@ -54,7 +54,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
+                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass} -reconfigure"
                     }
                 }
             }
