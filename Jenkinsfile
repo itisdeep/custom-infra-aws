@@ -10,7 +10,7 @@ pipeline {
     }
 
     stages {
-        stage ('Init backend and plan'){
+        stage ('Init backend'){
             when { 
                 allOf {
                     expression {params.initBackend == true}
