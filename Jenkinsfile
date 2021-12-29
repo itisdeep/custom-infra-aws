@@ -7,7 +7,7 @@ pipeline {
         choice(name: 'environment', choices: ['dev','stage','prod'], description: 'which environment to deploy to?')
         booleanParam(name: 'initBackend', defaultValue: '', description: 'initialization required for backend infra?')
         booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
-        booleanParam(name: 'destroy', defaultValue, '', description: 'Destroy main and backend infra?')
+        // booleanParam(name: 'destroy', defaultValue, '', description: 'Destroy main and backend infra?')
     }
 
     stages {
