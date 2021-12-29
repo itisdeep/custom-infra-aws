@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     dir (params.environment) {
-                        sh 'terraform init'
+                        bat 'terraform init'
                     }
                 }
             }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        sh "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
+                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass}"
                     }
                 }
             }
@@ -46,9 +46,9 @@ pipeline {
         stage ('plan') {
             steps {
                 script {
-                    sh "terraform plan --var-file=${params.environment}/${params.environment}.tfvars"
+                    bat "terraform plan --var-file=${params.environment}/${params.environment}.tfvars"
                     dir (params.environment) {
-                        sh "terraform plan --var-file=${params.environment}.tfvars"
+                        bat "terraform plan --var-file=${params.environment}.tfvars"
                     }
                 }
             }
