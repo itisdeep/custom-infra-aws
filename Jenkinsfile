@@ -6,7 +6,8 @@ pipeline {
         booleanParam(name: 'initBackend', defaultValue: '', description: 'initialization required for backend infra?')
         booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
         booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
-        booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main and backend infra?')
+        booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main infra?')
+        booleanParam(name: 'destroy_backend', defaultValue: '', description: 'Destroy backend infra?')
     }
 
     stages {
@@ -77,8 +78,10 @@ pipeline {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
                         bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
-                        dir (params.environment) {
-                            bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                        if (params.destroy_backend == true) {
+                            dir (params.environment) {
+                                bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                            }
                         }
                     }                    
                 }
