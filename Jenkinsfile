@@ -6,7 +6,7 @@ pipeline {
         booleanParam(name: 'initBackend', defaultValue: '', description: 'initialization required for backend infra?')
         booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
         booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
-        booleanParam(name: 'applyBackedinfra', defaultValue: '', description: 'Destroy main and backend infra?')
+        booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main and backend infra?')
     }
 
     stages {
