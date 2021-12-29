@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     dir (params.environment) {
-                        bat 'terraform init'
+                        bat 'terraform init -reconfigure'
                     }
                 }
             }
