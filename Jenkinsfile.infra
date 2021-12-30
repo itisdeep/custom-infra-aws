@@ -59,6 +59,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform workspace select ${params.environment}"
                         bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
                     }                    
                 }
