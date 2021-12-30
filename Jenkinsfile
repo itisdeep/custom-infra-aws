@@ -99,7 +99,7 @@ pipeline {
                         bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
                         if (params.destroy_backend == true) {
                             dir ('backend') {
-                                bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                                bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars -auto-approve"
                             }
                         }
                     }                    
