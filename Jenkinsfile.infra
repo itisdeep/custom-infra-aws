@@ -42,7 +42,6 @@ pipeline {
         stage ('Plan and apply main infra') {
             when { allOf {
                 expression {params.runDestroy == false}
-                expression {params.destroy_backend == false}
                 }
             }
             steps {
