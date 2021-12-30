@@ -8,6 +8,7 @@ pipeline {
         booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
         booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main infra?')
         booleanParam(name: 'destroy_backend', defaultValue: '', description: 'Destroy backend infra?')
+        booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
     }
 
     stages {
@@ -20,8 +21,22 @@ pipeline {
             }
             steps {
                 script {
-                    dir (params.environment) {
+                    dir ('backend') {
                         bat 'terraform init -reconfigure'
+                    }
+                }
+            }
+        }
+
+        stage ('Create workspaces') {
+            when { expression {params.runDestroy == false}}
+            steps {
+                script {
+                    if (params.createWS == true) {
+                        bat "terraform workspace new ${params.environment}"
+                        bat "terraform workspace list"
+                    } else {
+                        bat "terraform workspace select ${env}"
                     }
                 }
             }
@@ -35,9 +50,9 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        dir (params.environment) {
-                            bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars"
-                            bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                        dir ('backend') {
+                            bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars"
+                            bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars -auto-approve"
                         }
                     }
                 }
@@ -54,6 +69,7 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform workspace new ${params.environment}"
                         bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass} -reconfigure"
                     }
                 }
@@ -69,8 +85,8 @@ pipeline {
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}\\${params.environment}.tfvars"
-                        bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}\\${params.environment}.tfvars -auto-approve"
+                        bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars"
+                        bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
                     }
                 }
             }
