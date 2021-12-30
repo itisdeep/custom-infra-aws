@@ -28,20 +28,6 @@ pipeline {
             }
         }
 
-        stage ('Create workspaces') {
-            when { expression {params.runDestroy == false}}
-            steps {
-                script {
-                    if (params.createWS == true) {
-                        bat "terraform workspace new ${params.environment}"
-                        bat "terraform workspace list"
-                    } else {
-                        bat "terraform workspace select ${env}"
-                    }
-                }
-            }
-        }
-
         stage ('Plan and Apply backend') {
             when { allOf { 
                 expression {params.runDestroy == false}
@@ -54,6 +40,21 @@ pipeline {
                             bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars"
                             bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars -auto-approve"
                         }
+                    }
+                }
+            }
+        }
+
+
+        stage ('Create workspaces') {
+            when { expression {params.runDestroy == false}}
+            steps {
+                script {
+                    if (params.createWS == true) {
+                        bat "terraform workspace new ${params.environment}"
+                        bat "terraform workspace list"
+                    } else {
+                        bat "terraform workspace select ${env}"
                     }
                 }
             }
