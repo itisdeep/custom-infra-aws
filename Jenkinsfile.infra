@@ -5,7 +5,7 @@ pipeline {
         choice(name: 'environment', choices: ['dev','stage','prod'], description: 'which environment to deploy to?')
         booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
         booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
-        booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
+        // booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
     }
 
     stages {
@@ -29,12 +29,12 @@ pipeline {
             when { expression {params.runDestroy == false}}
             steps {
                 script {
-                    if (params.createWS == true) {
+                    // if (params.createWS == true) {
                         bat "terraform workspace new ${params.environment}"
                         bat "terraform workspace list"
-                    } else {
+                    // } else {
                         bat "terraform workspace select ${params.environment}"
-                    }
+                    // }
                 }
             }
         }
