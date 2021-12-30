@@ -8,7 +8,7 @@ pipeline {
         booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main infra?')
         booleanParam(name: 'destroy_backend', defaultValue: '', description: 'Destroy backend infra?')
     //     booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
-    // }
+    }
 
     stages {
         stage ('Init backend'){
