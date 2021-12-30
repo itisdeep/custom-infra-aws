@@ -45,21 +45,6 @@ pipeline {
             }
         }
 
-
-        stage ('Create workspaces') {
-            when { expression {params.runDestroy == false}}
-            steps {
-                script {
-                    if (params.createWS == true) {
-                        bat "terraform workspace new ${params.environment}"
-                        bat "terraform workspace list"
-                    } else {
-                        bat "terraform workspace select ${env}"
-                    }
-                }
-            }
-        }
-
         stage ('Init main'){
             when { 
                 allOf {
@@ -72,6 +57,20 @@ pipeline {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
                         bat "terraform workspace new ${params.environment}"
                         bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass} -reconfigure"
+                    }
+                }
+            }
+        }
+
+        stage ('Create workspaces') {
+            when { expression {params.runDestroy == false}}
+            steps {
+                script {
+                    if (params.createWS == true) {
+                        bat "terraform workspace new ${params.environment}"
+                        bat "terraform workspace list"
+                    } else {
+                        bat "terraform workspace select ${env}"
                     }
                 }
             }
