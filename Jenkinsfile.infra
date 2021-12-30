@@ -3,48 +3,15 @@ pipeline {
 
     parameters {
         choice(name: 'environment', choices: ['dev','stage','prod'], description: 'which environment to deploy to?')
-        booleanParam(name: 'initBackend', defaultValue: '', description: 'initialization required for backend infra?')
+        // booleanParam(name: 'initBackend', defaultValue: '', description: 'initialization required for backend infra?')
         booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
         booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
-        booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main infra?')
-        booleanParam(name: 'destroy_backend', defaultValue: '', description: 'Destroy backend infra?')
+        // booleanParam(name: 'applyBackendinfra', defaultValue: '', description: 'Destroy main infra?')
+        // booleanParam(name: 'destroy_backend', defaultValue: '', description: 'Destroy backend infra?')
         booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
     }
 
     stages {
-        stage ('Init backend'){
-            when { 
-                allOf {
-                    expression {params.initBackend == true}
-                    expression {params.runDestroy == false}
-                }
-            }
-            steps {
-                script {
-                    dir ('backend') {
-                        bat 'terraform init -reconfigure'
-                    }
-                }
-            }
-        }
-
-        stage ('Plan and Apply backend') {
-            when { allOf { 
-                expression {params.runDestroy == false}
-                expression {params.applyBackendinfra == true}
-            }}
-            steps {
-                script {
-                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
-                        dir ('backend') {
-                            bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars"
-                            bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars -auto-approve"
-                        }
-                    }
-                }
-            }
-        }
-
         stage ('Init main'){
             when { 
                 allOf {
@@ -91,17 +58,12 @@ pipeline {
             }
         }
 
-        stage ('Destroy all') {
+        stage ('Destroy infra') {
             when { expression {params.runDestroy == true}}
             steps {
                 script {
                     withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
                         bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
-                        if (params.destroy_backend == true) {
-                            dir ('backend') {
-                                bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=backend.tfvars -auto-approve"
-                            }
-                        }
                     }                    
                 }
             }
