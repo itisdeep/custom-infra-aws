@@ -43,3 +43,8 @@ variable "access_key" {
     description = "Please enter access Key"
     type = string
 }
+
+variable "create_nat_gw" {
+    description = "is nat gateway require to be created for private subnets?"
+    default = false
+}
