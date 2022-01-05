@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 resource aws_s3_bucket "bucket" {
-    bucket = "s3-backend-${var.app_name}-${var.env}"
+    bucket = "s3-backend-${var.app_name}"
     force_destroy = true
     # versioning {
     #     enabled = false
@@ -21,12 +21,12 @@ resource aws_s3_bucket "bucket" {
             object_lock_enabled = "Enabled"
     }
     tags = {
-        Name = "${var.env} app tfstate store"
+        Name = "${var.app_name} tfstate store"
     }
 }
 
 resource aws_dynamodb_table "terraform-lock" {
-    name           = "${var.env}-terraform_state"
+    name           = "terraform_state"
     read_capacity  = 5
     write_capacity = 5
     hash_key       = "LockID"
@@ -35,6 +35,6 @@ resource aws_dynamodb_table "terraform-lock" {
         type = "S"
     }
     tags = {
-        "Name" = "${var.env} DynamoDB Terraform State Lock Table"
+        "Name" = "${var.app_name} DynamoDB Terraform State Lock Table"
     }
 }

@@ -1,0 +1,71 @@
+pipeline {
+    agent {label 'windows-local'}
+
+    parameters {
+        choice(name: 'environment', choices: ['dev','stage','prod'], description: 'which environment to deploy to?')
+        booleanParam(name: 'initMain', defaultValue: '', description: 'initialization required for main infra?')
+        booleanParam(name: 'runDestroy', defaultValue: '', description: 'Destroy main and backend infra?')
+        booleanParam(name: 'createWS', defaultValue: '', description: 'Create new workspace?')
+    }
+
+    stages {
+        stage ('Init main'){
+            when { 
+                allOf {
+                    expression {params.initMain == true}
+                    expression {params.runDestroy == false}
+                }
+            }
+            steps {
+                script {
+                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform init -backend-config=access_key=${tfuser} -backend-config=secret_key=${tfpass} -reconfigure"
+                    }
+                }
+            }
+        }
+
+        stage ('Create workspaces') {
+            when { expression {params.runDestroy == false}}
+            steps {
+                script {
+                    if (params.createWS == true) {
+                        bat "terraform workspace new ${params.environment}"
+                        bat "terraform workspace list"
+                    } else {
+                        bat "terraform workspace select ${params.environment}"
+                    }
+                }
+            }
+        }
+
+        stage ('Plan and apply main infra') {
+            when { allOf {
+                expression {params.runDestroy == false}
+                }
+            }
+            steps {
+                script {
+                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform plan -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars"
+                        bat "terraform apply -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                    }
+                }
+            }
+        }
+
+        stage ('Destroy infra') {
+            when { expression {params.runDestroy == true}}
+            steps {
+                script {
+                    withCredentials ([usernamePassword(credentialsId: 'tfadminuser', usernameVariable: 'tfuser', passwordVariable: 'tfpass')]) {
+                        bat "terraform workspace select ${params.environment}"
+                        bat "terraform destroy -var access_key=${tfuser} -var secret_key=${tfpass} --var-file=${params.environment}.tfvars -auto-approve"
+                    }                    
+                }
+            }
+        }
+
+
+    } //stages closure
+}// pipeline closure
