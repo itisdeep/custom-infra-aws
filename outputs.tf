@@ -3,7 +3,7 @@ output "private_subnet_cidr" {
 }
 
 output "public_subnet_cidr" {
-    value = aws_subnet.private_subnet[*].cidr_block
+    value = aws_subnet.public_subnet[*].cidr_block
 }
 
 output "nat_eips" {
