@@ -3,7 +3,7 @@ custom aws infra using terraform
 
 To create a customized infrastructure using user provided number of subnets, cidr range, region etc. 
 
-## To try with terraform locally:
+## To try with terraform locally with s3 backend:
 * Clone this repo
 * Change the backend/backend.tfvars file with the values you want.
 * Initialize the backend.
@@ -11,7 +11,7 @@ To create a customized infrastructure using user provided number of subnets, cid
 $ cd backend
 $ terraform init
 ```
-* Apply the backend. This will create s3 bucket and dynamoDB table
+* Apply the backend. This will create s3 bucket and dynamoDB table. Please change the s3backend details in the file as per your requirement.
 ```
 $ cd ..
 $ terraform apply -var-file=backend.tfvars
@@ -33,7 +33,20 @@ $ terraform workspace select <your_environment..dev/prod>
 $ terraform plan -var access_key=<your_access_key> -var secret_key=<your_secret_key> --var-file=<your_env>.tfvars
 $ terraform apply -var access_key=<your_access_key> -var secret_key=<your_secret_key> --var-file=<your_env>.tfvars -auto-approve
 ```
-
+## To try with terraform locally without s3 backend:
+ * Clone the repo
+ * Delete or hashout the s3backend file.
+ * Delete the backend folder (as backend is not required in this scenario.)
+ * Change the values in tfvars file for dev and prod
+ * Initialize
+ ```
+ $ terraform init
+ ```
+ * plan and apply
+ ```
+ $ terraform plan -var-file=<your tfvars file>
+ $ terraform apply -var-file=<your tfvars file>
+ ```
 
 ## To try with terraform with Jenkins:
 
