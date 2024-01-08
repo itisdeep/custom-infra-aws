@@ -34,16 +34,6 @@ variable "private_subnet_count" {
     description = "Please enter the desired number of private subnets. Within the available number in the region."
 }
 
-variable "secret_key" {
-    description = "Please enter secret Key"
-    type = string
-}
-
-variable "access_key" {
-    description = "Please enter access Key"
-    type = string
-}
-
 variable "create_nat_gw" {
     description = "is nat gateway require to be created for private subnets?"
     default = false
