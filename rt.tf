@@ -26,16 +26,30 @@ resource "aws_route_table" "private1" {
   }
 }
 
-  resource aws_route "route" {
-    count = length(aws_route_table.private1)
-    route_table_id = element(aws_route_table.private1.*.id,count.index)
-    destination_cidr_block = "0.0.0.0/0"
-    nat_gateway_id = element(aws_nat_gateway.natgtw.*.id,count.index)
-    depends_on = [aws_route_table.private1]
-  }
+# resource aws_route "route" {
+#   count = length(aws_route_table.private1)
+#   route_table_id = element(aws_route_table.private1.*.id,count.index)
+#   destination_cidr_block = "0.0.0.0/0"
+#   nat_gateway_id = element(aws_nat_gateway.natgtw.*.id,count.index)
+#   depends_on = [aws_route_table.private1]
+# }
 
-resource "aws_route_table_association" "private_rt_assn"{
-  count = length(aws_subnet.private_subnet.*.id)
-  subnet_id = element(aws_subnet.private_subnet.*.id,count.index)
-  route_table_id = element(aws_route_table.private1.*.id,count.index)
+# resource "aws_route_table_association" "private_rt_assn"{
+#   count = length(aws_subnet.private_subnet.*.id)
+#   subnet_id = element(aws_subnet.private_subnet.*.id,count.index)
+#   route_table_id = element(aws_route_table.private1.*.id,count.index)
+# }
+
+resource "aws_route" "route" {
+  count                 = length(aws_route_table.private1) > 0 ? 1 : 0
+  route_table_id        = length(aws_route_table.private1) > 0 ? element(aws_route_table.private1.*.id, count.index) : null
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = length(aws_nat_gateway.natgtw) > 0 ? element(aws_nat_gateway.natgtw.*.id, count.index) : null
+  depends_on            = [aws_route_table.private1]
+}
+
+resource "aws_route_table_association" "private_rt_assn" {
+  count          = length(aws_subnet.private_subnet.*.id) > 0 ? length(aws_route_table.private1) : 0
+  subnet_id      = length(aws_subnet.private_subnet.*.id) > 0 ? element(aws_subnet.private_subnet.*.id, count.index) : null
+  route_table_id = length(aws_route_table.private1) > 0 ? element(aws_route_table.private1.*.id, count.index) : null
 }

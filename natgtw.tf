@@ -1,6 +1,6 @@
 resource aws_eip "nat_eip" {
     count = var.create_nat_gw ? 1 : 0
-    vpc = true
+    domain = "vpc"
 
     tags = {
         Name = "${var.app_name}_nat_eip_${count.index}"
