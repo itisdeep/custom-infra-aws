@@ -37,3 +37,9 @@ variable "create_nat_gw" {
     description = "is nat gateway require to be created for private subnets?"
     default = false
 }
+
+variable "newbits" {
+    type = number
+    description = "newbits is the number of additional bits with which to extend the prefix. For example, if given a prefix ending in /16 and a newbits value of 4, the resulting subnet address will have length /20"
+    default = 8
+}
