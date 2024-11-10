@@ -23,7 +23,6 @@ variable "az_number" {
 
 variable "vpc_cidr" {
     description = "Please enter the required cidr block for VPC"
-    default = "10.0.0.0/16"
 }
 
 variable "public_subnet_count" {
