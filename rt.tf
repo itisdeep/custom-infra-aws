@@ -1,5 +1,5 @@
 resource "aws_route_table" "public1" {
-  vpc_id = aws_vpc.devvpc.id
+  vpc_id = aws_vpc.this.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -19,7 +19,7 @@ resource "aws_route_table_association" "public_rt_assn"{
 
 resource "aws_route_table" "private1" {
   count = var.create_nat_gw ? 1 : 0
-  vpc_id = aws_vpc.devvpc.id
+  vpc_id = aws_vpc.this.id
 
     tags = {
     Name = "${var.app_name}-pvt-rt"

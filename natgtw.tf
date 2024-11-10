@@ -1,4 +1,4 @@
-resource aws_eip "nat_eip" {
+resource aws_eip "this" {
     count = var.create_nat_gw ? 1 : 0
     domain = "vpc"
 
@@ -9,7 +9,7 @@ resource aws_eip "nat_eip" {
 
 resource aws_nat_gateway "natgtw" {
     count = var.create_nat_gw ? 1 : 0
-    allocation_id = element(aws_eip.nat_eip.*.id,count.index)
+    allocation_id = element(aws_eip.this.*.id,count.index)
     subnet_id = element(aws_subnet.public_subnet.*.id,count.index)
 
     tags = {
