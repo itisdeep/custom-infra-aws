@@ -1,0 +1,36 @@
+networks:
+  app-platform-net:
+    name: app-platform-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+  backend_net:
+    name: backend_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.10.0/24
+
+  db_net:
+    name: db_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.20.0/24
+
+  frontend_net:
+    name: frontend_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.30.0/24
+
+  internal-app-net:
+    name: internal-app-net
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.100.0/24
