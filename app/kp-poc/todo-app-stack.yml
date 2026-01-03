@@ -9,6 +9,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./secrets/cert.pem:/etc/ssl/certs/certificate.pem
+      - ./secrets/key.pem:/etc/ssl/private/key.pem
     networks:
       - public-net
     deploy:
