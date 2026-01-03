@@ -16,8 +16,8 @@ services:
       MONGO_USER: username
       MONGO_PASSWORD: password
       MONGO_DB: appdb
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

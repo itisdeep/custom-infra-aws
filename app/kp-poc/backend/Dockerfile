@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN apk add curl
+
 EXPOSE 3001
 
 CMD ["node", "server.js"]

@@ -1,3 +1,33 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: app-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - certbot-conf:/etc/letsencrypt
+    networks:
+      - frontend_net
+
+  certbot:
+    image: certbot/dns-cloudflare
+    container_name: certbot
+    secrets:
+      - cloudflare_api_token
+    volumes:
+      - certbot-conf:/etc/letsencrypt
+    command: >
+      certonly
+      --dns-cloudflare
+      --dns-cloudflare-credentials /run/secrets/cloudflare_api_token
+      --dns-cloudflare-propagation-seconds 60
+      --email deep.devopsnerd@gmail.com
+      --agree-tos
+      --no-eff-email
+      -d todo-app.myrrhsolutions.in
+      
 networks:
   app-platform-net:
     name: app-platform-net
@@ -34,3 +64,10 @@ networks:
     ipam:
       config:
         - subnet: 172.30.100.0/24
+
+secrets:
+  cloudflare_api_token:
+    file: ./secrets/cloudflare.ini
+
+volumes:
+  certbot-conf:
