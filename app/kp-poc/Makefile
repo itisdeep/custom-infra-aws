@@ -1,22 +1,17 @@
-COMPOSE=docker compose \
-	-f docker-compose.yml \
-	-f DB/docker-compose.yml \
-	-f backend/docker-compose.yml \
-	-f frontend/docker-compose.yml
+build:
+	docker build -t todo-app-backend:latest ./backend
+	docker build -t todo-app-frontend:latest ./frontend
 
-up:
-	$(COMPOSE) up -d
+deploy:
+	docker stack deploy -c todo-app-stack.yml todo-app
 
-down:
-	$(COMPOSE) down
+logs-backend:
+	docker service logs todo-app_backend
 
-ps:
-	$(COMPOSE) ps
+logs-frontend:
+	docker service logs todo-app_frontend
 
-logs:
-	@if [ -z "$(SERVICE)" ]; then \
-		echo "Usage: make logs SERVICE=<service_name>"; \
-		echo "Example: make logs SERVICE=api"; \
-		exit 1; \
-	fi
-	$(COMPOSE) logs -f $(SERVICE)
+network:
+	docker network create --driver overlay public-net
+	docker network create --driver overlay backend-net
+	docker network create --driver overlay db-net

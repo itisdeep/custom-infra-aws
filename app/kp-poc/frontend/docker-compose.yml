@@ -6,6 +6,7 @@ services:
       - "3000:3000"
     networks:
       - frontend_net
+      - internal-app-net
     depends_on:
       - api
 

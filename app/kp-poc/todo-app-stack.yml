@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: todo-app-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - public-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  frontend:
+    image: todo-app-frontend:latest
+    networks:
+      - public-net
+      - backend-net
+    environment:
+      API_URL: http://backend:3001
+    deploy:
+      replicas: 1
+
+  backend:
+    image: todo-app-backend:latest
+    networks:
+      - backend-net
+      - db-net
+    environment:
+      MONGO_URL: mongodb://mongo:27017/tododb
+    deploy:
+      replicas: 1
+
+  mongo:
+    image: mongo:6
+    networks:
+      - db-net
+    volumes:
+      - mongo-data:/data/db
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  public-net:
+    external: true
+  backend-net:
+    external: true
+  db-net:
+    external: true
+
+volumes:
+  mongo-data:
